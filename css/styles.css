@@ -1,0 +1,335 @@
+/**
+ * Estilos CSS - Laboratorio Virtual de Química I
+ * 
+ * Diseño: "Laboratorio Digital" con estética oscura y acentos neón
+ * Principios: DUA (Diseño Universal para el Aprendizaje)
+ * - Alto contraste para legibilidad
+ * - Estados de foco visibles
+ * - Responsive 100%
+ */
+
+/* Variables CSS personalizadas */
+:root {
+    --color-primary: #06b6d4;      /* cyan-500 */
+    --color-secondary: #22c55e;    /* green-500 */
+    --color-bg-dark: #111827;      /* gray-900 */
+    --color-bg-card: #1f2937;      /* gray-800 */
+    --color-text: #f9fafb;         /* gray-50 */
+    --color-text-muted: #9ca3af;   /* gray-400 */
+    
+    --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #22c55e 100%);
+    --gradient-blue: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    --gradient-green: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --gradient-purple: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+    
+    --shadow-neon: 0 0 20px rgba(6, 182, 212, 0.3);
+    --shadow-neon-strong: 0 0 30px rgba(6, 182, 212, 0.5);
+    
+    --border-glow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+/* Reset y base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-dark);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0891b2;
+}
+
+/* Accesibilidad - Focus visible */
+*:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Header con efecto glassmorphism */
+header {
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Contenedor del visor Spline */
+#spline-container {
+    min-height: 400px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#spline-container:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-neon);
+}
+
+/* Spline Viewer - Ajustes */
+spline-viewer {
+    --background-color: #111827;
+    --loading-background-color: #111827;
+}
+
+/* Botones de control químico */
+.control-btn {
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.control-btn:hover::before {
+    left: 100%;
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+/* Panel de chat */
+#panel-chat {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+}
+
+/* Historial de mensajes */
+#chat-history {
+    scroll-behavior: smooth;
+}
+
+.message {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-user {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.message-user .bg-gray-700\/70 {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+    color: white;
+    border-bottom-right-radius: 0;
+}
+
+.message-ai .bg-gray-700\/70 {
+    border-bottom-left-radius: 0;
+}
+
+/* Indicador de escritura */
+#typing-indicator {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Input del chat */
+#chat-input {
+    transition: all 0.3s ease;
+}
+
+#chat-input:focus {
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+/* Botones de preguntas rápidas */
+.quick-question {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.quick-question:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
+}
+
+/* Modal */
+dialog {
+    background: transparent;
+    border: none;
+    padding: 0;
+    max-width: 90vw;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+dialog[open] {
+    animation: modalOpen 0.3s ease-out;
+}
+
+@keyframes modalOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Estado de reacción */
+#reaction-status {
+    transition: all 0.3s ease;
+}
+
+/* Efectos de neón para elementos interactivos */
+.border-cyan-500\/30 {
+    transition: border-color 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .lg\:grid-cols-12 {
+        grid-template-columns: 1fr;
+    }
+    
+    .lg\:col-span-8,
+    .lg\:col-span-4 {
+        grid-column: span 1;
+    }
+    
+    #panel-3d {
+        min-height: 500px;
+    }
+    
+    #panel-chat {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.25rem !important;
+    }
+    
+    .control-btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem;
+    }
+    
+    #spline-container {
+        min-height: 300px;
+    }
+    
+    .message .bg-gray-700\/70 {
+        max-width: 95% !important;
+    }
+}
+
+/* Animaciones para carga */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Utilidades de accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Modo de alto contraste (opcional) */
+@media (prefers-contrast: high) {
+    :root {
+        --color-primary: #00ffff;
+        --color-secondary: #00ff00;
+    }
+    
+    .border-cyan-500\/30 {
+        border-width: 2px;
+    }
+}
+
+/* Reducir movimiento para usuarios sensibles */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    header,
+    #panel-chat,
+    .control-btn {
+        display: none;
+    }
+    
+    #spline-container {
+        border: 2px solid #000;
+    }
+}
