@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Prototipo de Aprendizaje Inmersivo para Química I - Explora enlaces químicos en 3D con un tutor IA">
+    <title>Química I - Laboratorio Virtual Inmersivo</title>
+    
+    <!-- Tailwind CSS vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Spline Viewer Component -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.59/build/spline-viewer.js"></script>
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header role="banner" class="border-b border-cyan-500/30 bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl" aria-hidden="true">🧪</span>
+                <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">
+                    Laboratorio Virtual de Química I
+                </h1>
+            </div>
+            <nav role="navigation" aria-label="Navegación principal">
+                <button 
+                    id="info-btn"
+                    class="px-4 py-2 rounded-lg border border-cyan-500/50 hover:bg-cyan-500/20 transition-colors"
+                    aria-label="Información sobre el laboratorio"
+                >
+                    ℹ️ Info
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main role="main" class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-140px)]">
+            
+            <!-- Panel Izquierdo (70%) - Visor 3D y Controles -->
+            <section 
+                id="panel-3d" 
+                class="lg:col-span-8 flex flex-col gap-4"
+                aria-label="Visor tridimensional de moléculas"
+            >
+                <!-- Visor Spline -->
+                <div 
+                    id="spline-container" 
+                    class="flex-1 rounded-2xl overflow-hidden border border-cyan-500/30 bg-gray-800/50 relative"
+                    role="application"
+                    aria-label="Visualizador 3D interactivo de estructuras químicas"
+                >
+                    <!-- Spline Viewer -->
+                    <spline-viewer 
+                        url="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode"
+                        id="spline-viewer"
+                        class="w-full h-full"
+                        aria-label="Escenario 3D de química interactiva"
+                    ></spline-viewer>
+                    
+                    <!-- Overlay de carga -->
+                    <div id="loading-overlay" class="absolute inset-0 flex items-center justify-center bg-gray-900/80">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+                            <p class="text-cyan-400">Cargando laboratorio 3D...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Control Químico -->
+                <div 
+                    class="bg-gray-800/80 rounded-xl p-4 border border-cyan-500/30"
+                    role="region"
+                    aria-label="Controles de simulación química"
+                >
+                    <h2 class="text-lg font-semibold mb-3 text-cyan-400">⚗️ Controles de Reacción</h2>
+                    <div class="flex flex-wrap gap-3">
+                        <button 
+                            id="btn-enlace-ionico"
+                            class="control-btn px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 transition-all transform hover:scale-105 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            aria-label="Simular formación de enlace iónico entre átomos"
+                            data-reaction="ionic"
+                        >
+                            🔵 Enlace Iónico
+                        </button>
+                        
+                        <button 
+                            id="btn-enlace-covalente"
+                            class="control-btn px-6 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 transition-all transform hover:scale-105 focus:ring-2 focus:ring-green-400 focus:outline-none"
+                            aria-label="Simular formación de enlace covalente entre átomos"
+                            data-reaction="covalent"
+                        >
+                            🟢 Enlace Covalente
+                        </button>
+                        
+                        <button 
+                            id="btn-reset"
+                            class="control-btn px-6 py-3 rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 transition-all transform hover:scale-105 focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                            aria-label="Reiniciar la simulación a estado inicial"
+                            data-reaction="reset"
+                        >
+                            🔄 Reiniciar
+                        </button>
+                        
+                        <button 
+                            id="btn-info-molecula"
+                            class="control-btn px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 transition-all transform hover:scale-105 focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                            aria-label="Mostrar información detallada de la molécula actual"
+                            data-reaction="info"
+                        >
+                            📊 Información
+                        </button>
+                    </div>
+                    
+                    <!-- Estado actual -->
+                    <div class="mt-4 p-3 bg-gray-900/50 rounded-lg border border-cyan-500/20">
+                        <p class="text-sm text-gray-400">Estado: <span id="reaction-status" class="text-cyan-400 font-semibold">Inicial</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Panel Derecho (30%) - Tutor IA -->
+            <aside 
+                id="panel-chat" 
+                class="lg:col-span-4 flex flex-col bg-gray-800/80 rounded-xl border border-cyan-500/30 overflow-hidden"
+                role="complementary"
+                aria-label="Chat con tutor inteligente de química"
+            >
+                <!-- Header del Chat -->
+                <div class="p-4 border-b border-cyan-500/30 bg-gray-900/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-green-400 flex items-center justify-center">
+                            <span class="text-xl">🤖</span>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-cyan-400">Tutor IA de Química</h2>
+                            <p class="text-xs text-gray-400">Especialista en estructura atómica</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historial del Chat -->
+                <div 
+                    id="chat-history" 
+                    class="flex-1 overflow-y-auto p-4 space-y-4"
+                    role="log"
+                    aria-label="Historial de conversación con el tutor"
+                    aria-live="polite"
+                >
+                    <!-- Mensaje de bienvenida -->
+                    <div class="message message-ai">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-green-400 flex-shrink-0 flex items-center justify-center text-sm">
+                                🤖
+                            </div>
+                            <div class="bg-gray-700/70 rounded-lg rounded-tl-none p-3 max-w-[85%]">
+                                <p class="text-sm">¡Hola! 👋 Soy tu tutor de Química I. Estoy aquí para ayudarte a entender los enlaces químicos y la estructura atómica.</p>
+                                <p class="text-sm mt-2">Puedes preguntar sobre:</p>
+                                <ul class="text-sm list-disc list-inside mt-1 text-gray-300">
+                                    <li>Diferencias entre enlaces iónicos y covalentes</li>
+                                    <li>Cómo se forman las moléculas</li>
+                                    <li>Propiedades de los elementos</li>
+                                </ul>
+                                <p class="text-sm mt-2">¡Usa los controles 3D para experimentar!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de "escribiendo..." -->
+                <div id="typing-indicator" class="hidden px-4 py-2">
+                    <div class="flex items-center gap-2 text-gray-400 text-sm">
+                        <div class="flex gap-1">
+                            <span class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
+                            <span class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
+                            <span class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
+                        </div>
+                        <span>El tutor está escribiendo...</span>
+                    </div>
+                </div>
+
+                <!-- Input del Chat -->
+                <div class="p-4 border-t border-cyan-500/30 bg-gray-900/50">
+                    <form id="chat-form" class="flex gap-2" role="form" aria-label="Formulario de envío de mensajes">
+                        <input 
+                            type="text" 
+                            id="chat-input"
+                            class="flex-1 px-4 py-3 bg-gray-800 border border-cyan-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 placeholder-gray-500"
+                            placeholder="Escribe tu pregunta sobre química..."
+                            aria-label="Campo de texto para preguntas"
+                            autocomplete="off"
+                        />
+                        <button 
+                            type="submit"
+                            class="px-4 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-400 hover:to-green-400 rounded-lg transition-all transform hover:scale-105 focus:ring-2 focus:ring-cyan-400 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Enviar mensaje al tutor"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                        </button>
+                    </form>
+                    
+                    <!-- Opciones rápidas -->
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <button 
+                            class="quick-question text-xs px-3 py-1.5 bg-gray-700/50 hover:bg-gray-600/50 rounded-full border border-cyan-500/30 transition-colors"
+                            data-question="¿Qué es un enlace iónico?"
+                        >
+                            💡 ¿Enlace iónico?
+                        </button>
+                        <button 
+                            class="quick-question text-xs px-3 py-1.5 bg-gray-700/50 hover:bg-gray-600/50 rounded-full border border-cyan-500/30 transition-colors"
+                            data-question="¿Cómo se forma un enlace covalente?"
+                        >
+                            💡 ¿Enlace covalente?
+                        </button>
+                        <button 
+                            class="quick-question text-xs px-3 py-1.5 bg-gray-700/50 hover:bg-gray-600/50 rounded-full border border-cyan-500/30 transition-colors"
+                            data-question="Explícame la tabla periódica"
+                        >
+                            💡 Tabla periódica
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Modal de Información -->
+    <dialog 
+        id="info-modal" 
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 p-4 m-auto max-w-2xl rounded-2xl border border-cyan-500/30"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+    >
+        <div class="bg-gray-900 rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="modal-title" class="text-2xl font-bold text-cyan-400">🧪 Sobre este Laboratorio</h2>
+                <button 
+                    id="close-modal"
+                    class="text-gray-400 hover:text-white text-2xl"
+                    aria-label="Cerrar modal"
+                >
+                    ×
+                </button>
+            </div>
+            <div id="modal-description" class="space-y-4 text-gray-300">
+                <p>Este prototipo de aprendizaje inmersivo combina visualización 3D interactiva con inteligencia artificial para enseñar conceptos fundamentales de Química I.</p>
+                
+                <h3 class="font-semibold text-cyan-400 mt-4">Características:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Visualización 3D:</strong> Manipula moléculas y observa enlaces en tiempo real</li>
+                    <li><strong>Tutor IA:</strong> Responde preguntas y guía tu aprendizaje</li>
+                    <li><strong>Accesibilidad:</strong> Diseñado siguiendo principios DUA (Diseño Universal para el Aprendizaje)</li>
+                    <li><strong>Multiplataforma:</strong> Funciona en navegadores modernos sin instalación</li>
+                </ul>
+
+                <h3 class="font-semibold text-cyan-400 mt-4">Tecnologías:</h3>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Spline para gráficos 3D</li>
+                    <li>JavaScript ES6+ puro</li>
+                    <li>Tailwind CSS</li>
+                    <li>Node.js + Express (backend opcional)</li>
+                </ul>
+
+                <div class="mt-6 p-4 bg-gray-800/50 rounded-lg border border-cyan-500/20">
+                    <p class="text-sm text-yellow-400">⚠️ <strong>Nota:</strong> Este es un prototipo educativo. Para usar el tutor IA con OpenAI, configura el backend siguiendo las instrucciones del README.</p>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Scripts -->
+    <script src="js/spline-controller.js"></script>
+    <script src="js/ai-tutor.js"></script>
+</body>
+</html>
